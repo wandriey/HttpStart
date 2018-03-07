@@ -11,11 +11,12 @@ namespace HttpStart
     class Services
     {
         private TcpClient _connectionSocket;
-        private string _uri;
+        private string _url;
 
         public Services(TcpClient connection)
         {
             _connectionSocket = connection;
+            _url = @"C:\Users\Jonas\Documents\Tekst filer til httpStart";
         }
 
         public void doIt()
@@ -28,20 +29,24 @@ namespace HttpStart
 
             string message = sr.ReadLine();
             string[] messagesplit = message.Split(' ');           //Plads nummer 0 = get, 1 = filnavn,  2 = http
+            _url = _url + messagesplit.ElementAt(1);
 
-            if (messagesplit.ElementAt(0) == "GET")       
+            if (messagesplit.ElementAt(0) == "GET")
             {
-                string answer1 = $"{messagesplit.ElementAt(1)}";
-                Console.WriteLine(answer1);
-                string answer = "HTTP/1.1 200 OK\r\n  Content - Type: text / html\r\n";
+                string answer = $"{messagesplit.ElementAt(1)}";
+                // Console.WriteLine(answer);                      //bruges til at tjekke om split virkede.
+                string answer1 = "HTTP/1.1 200 OK\r\n Content-Type: text/html\r\n Connection: close\r\n\r\n";
 
-                do
-                {
+                
                     Console.WriteLine("Client: " + message);
-                    sw.WriteLine(answer);
+                    sw.WriteLine(answer1);
                     message = sr.ReadLine();
-                } while (message != null && message != "STOP");
-                Console.WriteLine("Server Stopped");
+
+                    FileStream fs = new FileStream(_url, FileMode.Open, FileAccess.Read);
+                    fs.CopyTo(sw.BaseStream);
+                    sw.BaseStream.Flush(); 
+
+                Console.WriteLine("Connection Stopped");
             }
 
             _connectionSocket.Close();
