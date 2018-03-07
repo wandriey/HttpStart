@@ -11,6 +11,8 @@ namespace HttpStart
     class Services
     {
         private TcpClient _connectionSocket;
+        private string _uri;
+
         public Services(TcpClient connection)
         {
             _connectionSocket = connection;
@@ -25,19 +27,25 @@ namespace HttpStart
             sw.AutoFlush = true; // enable automatic flushing
 
             string message = sr.ReadLine();
-            string answer = "";
+            string[] messagesplit = message.Split(' ');           //Plads nummer 0 = get, 1 = filnavn,  2 = http
 
-            do
+            if (messagesplit.ElementAt(0) == "GET")       
             {
-                Console.WriteLine("Client: " + message);
-                answer = message.ToUpper();
-                sw.WriteLine(answer);
-                message = sr.ReadLine();
-            } while (message != null && message != "STOP");
-            Console.WriteLine("Server Stopped");
-            
-            ns.Close();
+                string answer1 = $"{messagesplit.ElementAt(1)}";
+                Console.WriteLine(answer1);
+                string answer = "HTTP/1.1 200 OK\r\n  Content - Type: text / html\r\n";
+
+                do
+                {
+                    Console.WriteLine("Client: " + message);
+                    sw.WriteLine(answer);
+                    message = sr.ReadLine();
+                } while (message != null && message != "STOP");
+                Console.WriteLine("Server Stopped");
+            }
+
             _connectionSocket.Close();
+            ns.Close();
         }
     }
 }

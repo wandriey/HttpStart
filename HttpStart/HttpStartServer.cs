@@ -13,7 +13,7 @@ namespace HttpStart
     {
         static void Main(string[] args)
         {
-            IPAddress ip = IPAddress.Parse("172.20.10.2");   //
+            IPAddress ip = IPAddress.Parse("192.168.6.76");   //
             TcpListener serverSocket = new TcpListener(ip, 6789);
             serverSocket.Start();
 
